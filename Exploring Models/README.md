@@ -1,1 +1,1 @@
-Staring <3
+Starting <3
