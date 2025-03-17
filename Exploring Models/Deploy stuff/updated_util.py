@@ -45,7 +45,8 @@ def initialize_buffalo_l():
     faceapp.prepare(ctx_id=0, det_size=(640,640), det_thresh=0.5)
     # warning: don't set det_thresh < 0.3
     # Load the NPZ file
-    file_np = np.load('/content/dataframe_buffalo_l.npz', allow_pickle=True)
+    #** Put npz file location here  **
+    file_np = np.load('/content/dataframe_buffalo_l.npz', allow_pickle=True)   
     # global dataframe
     dataframe = pd.DataFrame(file_np['arr_0'], columns=file_np['arr_1'])
 
