@@ -6,17 +6,21 @@ import dlib
 import config
 from util import *
 from runner import yolo_detect
+!pip install insightface
+!pip install onnxruntime
+import warnings
+warnings.filterwarnings('ignore')  # Ignore all warnings
 
 # Global stop event
 stop_event = threading.Event()
 
 # Function to process a single camera
 def process_camera(room_no, camera_url,camera_type):
-    initialize()
-    #initialize_insight_face()
+    # initialize()
+    initialize_buffalo_l()
 
     face_detection_type='yolov8'
-    model=""
+    model="buffalo_l"
 
     while not stop_event.is_set():  # Check if the stop event is triggered
         try:
@@ -24,7 +28,8 @@ def process_camera(room_no, camera_url,camera_type):
             if camera_type=="ip":
                 image_path = capture_from_ip_camera(room_no, camera_url)
             else:
-                image_path = capture_from_camera(room_no,camera_url)
+                image_path = "/content/drive/MyDrive/pixx/og.jpg" #Using saved image :v
+                # image_path = capture_from_camera(room_no,camera_url)
             
             if image_path is None:
                 print(f"No image captured from Camera {room_no}. Retrying...")
@@ -34,7 +39,9 @@ def process_camera(room_no, camera_url,camera_type):
             # Process the image based on the selected model
             if model == "insight_face":
                 print(f"Processing with InsightFace for Camera {room_no}")
-                
+            elif model == "buffalo_l":
+                image_np = load_image_from_path(image_path)
+                results = get_class_from_buffalo_l(image_np)                
             elif face_detection_type == 'yolov8':
                 # Perform YOLOv8 face detection
                 bounding_boxes = yolo_detect(image_path)  # Detect faces
@@ -52,7 +59,7 @@ def process_camera(room_no, camera_url,camera_type):
                 results = get_class_from_np_img(image_np)
 
             # Call API with the results
-            call_api_with_result(results, f"{room_no}")
+            # call_api_with_result(results, f"{room_no}")
             print(f"Result for Camera {room_no}: {results}")
             
             # Sleep for a short duration before processing the next frame
@@ -68,7 +75,7 @@ def process_camera(room_no, camera_url,camera_type):
 if __name__ == "__main__":
     # List of cameras (ID and URL pairs)
     cameras = [
-        {"room_no": "gallery 1", "url": config.G1_CAMERA_URL, "camera_type":"ip"},
+        {"room_no": "gallery 1", "url": config.G1_CAMERA_URL, "camera_type":"using saved image(no camera used)"},
         #{"room_no": "gallery 2", "url": config.G2_CAMERA_URL, "camera_type":"mobile"},
         # Add more cameras as needed
     ]
