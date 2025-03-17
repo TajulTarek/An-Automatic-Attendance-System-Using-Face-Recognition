@@ -7,6 +7,8 @@ import cv2
 import os
 import requests
 import pandas as pd
+import sklearn.metrics.pairwise as pairwise
+
 
 baseUrl="https://automatic-attendance-system-using-face.onrender.com"
 
@@ -32,6 +34,79 @@ def initialize():
         config.FACE_RECOGNITION_MODEL_PATH
     )
 
+
+def initialize_buffalo_l():
+    global file_np, dataframe, faceapp
+    from insightface.app import FaceAnalysis
+    faceapp = FaceAnalysis(name='buffalo_l',
+                        root='insightface_model',
+                        providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+
+    faceapp.prepare(ctx_id=0, det_size=(640,640), det_thresh=0.5)
+    # warning: don't set det_thresh < 0.3
+    # Load the NPZ file
+    file_np = np.load('/content/dataframe_buffalo_l.npz', allow_pickle=True)
+    # global dataframe
+    dataframe = pd.DataFrame(file_np['arr_0'], columns=file_np['arr_1'])
+
+    # global faceapp
+#2 Mkb
+def ml_search_algorithm(dataframe,feature_column,test_vector,
+                        name=['Name'],thresh=0.5):
+    """
+    cosine similarity base search algorithm
+    """
+    # step-1: take the dataframe (collection of data)
+    dataframe = dataframe.copy()
+    # step-2: Index face embeding from the dataframe and convert into array
+    X_list = dataframe[feature_column].tolist()
+    x = np.asarray(X_list)
+
+    # step-3: Cal. cosine similarity
+    similar = pairwise.cosine_similarity(x,test_vector.reshape(1,-1))
+    similar_arr = np.array(similar).flatten()
+    dataframe['cosine'] = similar_arr
+
+    # step-4: filter the data
+    data_filter = dataframe.query(f'cosine >= {thresh}')
+    if len(data_filter) > 0:
+        # step-5: get the person name
+        data_filter.reset_index(drop=True,inplace=True)
+        argmax = data_filter['cosine'].argmax()
+        person_name = data_filter.loc[argmax][name]
+
+    else:
+        person_name = 'Unknown'
+        # person_role = 'Unknown'
+
+    return person_name
+#mkb
+def get_class_from_buffalo_l(image_np):
+
+    results = faceapp.get(image_np)
+
+    # Step-2: Use for loop and extract each embedding and pass to ml_search_algorithm
+    identified_names = []
+    for res in results:
+        embeddings = res['embedding']
+        person_name = ml_search_algorithm(dataframe, 
+                                          'Facial_Features',
+                                          test_vector=embeddings,
+                                          name=['Name'],
+                                          thresh=0.5)
+        # Extract the name as a string from the Series if necessary
+        if isinstance(person_name, pd.Series):
+            name_str = person_name.values[0]  # or person_name.iloc[0]
+        else:
+            name_str = person_name
+
+            
+
+        # Append to the list if the name is not "Unknown"
+        if name_str != "Unknown":
+            identified_names.append(name_str)
+
+    return identified_names
 
 def call_api_with_result(result,room_no):
     url = baseUrl+"/models/result"
