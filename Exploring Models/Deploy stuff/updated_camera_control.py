@@ -29,6 +29,7 @@ def process_camera(room_no, camera_url,camera_type):
                 image_path = capture_from_ip_camera(room_no, camera_url)
             else:
                 image_path = "/content/drive/MyDrive/pixx/og.jpg" #Using saved image :v
+                
                 # image_path = capture_from_camera(room_no,camera_url)
             
             if image_path is None:
@@ -59,7 +60,7 @@ def process_camera(room_no, camera_url,camera_type):
                 results = get_class_from_np_img(image_np)
 
             # Call API with the results
-            # call_api_with_result(results, f"{room_no}")
+            call_api_with_result(results, f"{room_no}")
             print(f"Result for Camera {room_no}: {results}")
             
             # Sleep for a short duration before processing the next frame
