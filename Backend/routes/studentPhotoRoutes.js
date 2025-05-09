@@ -8,6 +8,77 @@ router.get('/test', (req, res) => {
     res.json({ message: 'Student photos endpoint is working' });
 });
 
+// Route to get all student photos - MUST BE BEFORE /:registrationNumber
+router.get('/all', async (req, res) => {
+    try {
+        console.log('\n=== Fetching All Student Photos ===');
+        const allPhotos = await StudentPhoto.find()
+            .sort({ createdAt: -1 });
+
+        console.log(`Found ${allPhotos.length} records`);
+        
+        // Format the response
+        const formattedResponse = allPhotos.map(record => ({
+            registrationNumber: record.registrationNumber,
+            photos: record.photos,
+            uploadedAt: record.createdAt
+        }));
+
+        res.status(200).json({
+            message: 'Successfully retrieved all student photos',
+            count: formattedResponse.length,
+            data: formattedResponse
+        });
+    } catch (error) {
+        console.error('\n=== Error Fetching All Photos ===');
+        console.error('Error details:', error.message);
+        res.status(500).json({ 
+            message: 'Error fetching photos', 
+            error: error.message 
+        });
+    }
+});
+
+// Route to get photos by registration number
+router.get('/:registrationNumber', async (req, res) => {
+    try {
+        const { registrationNumber } = req.params;
+        console.log('\n=== Fetching Photos for Student ===');
+        console.log('Registration Number:', registrationNumber);
+
+        const studentPhotos = await StudentPhoto.find({ registrationNumber })
+            .sort({ createdAt: -1 });
+
+        console.log('Found records:', studentPhotos.length);
+        
+        if (studentPhotos.length === 0) {
+            return res.status(404).json({
+                message: `No photos found for student ${registrationNumber}`
+            });
+        }
+
+        // Format the response
+        const formattedResponse = studentPhotos.map(record => ({
+            registrationNumber: record.registrationNumber,
+            photos: record.photos,
+            uploadedAt: record.createdAt
+        }));
+
+        res.status(200).json({
+            message: 'Successfully retrieved student photos',
+            count: formattedResponse.length,
+            data: formattedResponse
+        });
+    } catch (error) {
+        console.error('\n=== Error Fetching Student Photos ===');
+        console.error('Error details:', error.message);
+        res.status(500).json({ 
+            message: 'Error fetching photos', 
+            error: error.message 
+        });
+    }
+});
+
 // Route to save student photos
 router.post('/upload', async (req, res) => {
     try {
@@ -53,37 +124,6 @@ router.post('/upload', async (req, res) => {
         console.error('Stack trace:', error.stack);
         res.status(500).json({ 
             message: 'Error uploading photos', 
-            error: error.message 
-        });
-    }
-});
-
-// Route to get photos by registration number
-router.get('/:registrationNumber', async (req, res) => {
-    try {
-        const { registrationNumber } = req.params;
-        console.log('\n=== Fetching Photos ===');
-        console.log('Registration Number:', registrationNumber);
-
-        const studentPhotos = await StudentPhoto.find({ registrationNumber })
-            .sort({ createdAt: -1 });
-
-        console.log('Found records:', studentPhotos.length);
-        if (studentPhotos.length > 0) {
-            console.log('Latest record:', {
-                id: studentPhotos[0]._id,
-                photoCount: studentPhotos[0].photos.length,
-                createdAt: studentPhotos[0].createdAt
-            });
-        }
-
-        res.status(200).json(studentPhotos);
-    } catch (error) {
-        console.error('\n=== Error Fetching Photos ===');
-        console.error('Error details:', error.message);
-        console.error('Stack trace:', error.stack);
-        res.status(500).json({ 
-            message: 'Error fetching photos', 
             error: error.message 
         });
     }
