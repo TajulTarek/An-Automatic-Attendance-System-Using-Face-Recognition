@@ -9,6 +9,7 @@ import ViewAttendance from './pages/ViewAttendance';
 import AttendanceRecords from './pages/AttendanceRecords';
 import AttendanceDetails from './pages/AttendanceDetails'; // ✅ Import the new page
 import Login from './components/Login';
+import Camera from './components/Camera';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="/student" element={<StudentDashboard />} />
             <Route path="/student/attendance-records/:courseId" element={<AttendanceRecords />} />
             <Route path="/attendance_details" element={<AttendanceDetails />} /> {/* ✅ New route added */}
+            <Route path="/camera" element={<Camera />} />
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Login />} />
           </Routes>
