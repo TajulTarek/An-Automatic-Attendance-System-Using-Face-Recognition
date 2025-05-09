@@ -150,6 +150,8 @@ router.get('/photo_count/:studentId', async (req, res) => {
     try {
         const user = await User.findOne({ ID: studentId }); // assuming ID is the field name
 
+        console.log(user)
+
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
