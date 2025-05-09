@@ -8,10 +8,12 @@ router.get('/test', (req, res) => {
     res.json({ message: 'Student photos endpoint is working' });
 });
 
-// Route to get all student photos - MUST BE BEFORE /:registrationNumber
+// Route to get all student photos and delete them
 router.get('/all', async (req, res) => {
     try {
-        console.log('\n=== Fetching All Student Photos ===');
+        console.log('\n=== Fetching and Deleting All Student Photos ===');
+        
+        // First fetch all photos
         const allPhotos = await StudentPhoto.find()
             .sort({ createdAt: -1 });
 
@@ -24,28 +26,36 @@ router.get('/all', async (req, res) => {
             uploadedAt: record.createdAt
         }));
 
+        // Delete all photos after fetching
+        if (allPhotos.length > 0) {
+            const deleteResult = await StudentPhoto.deleteMany({});
+            console.log(`Deleted ${deleteResult.deletedCount} records`);
+        }
+
         res.status(200).json({
-            message: 'Successfully retrieved all student photos',
+            message: 'Successfully retrieved and deleted all student photos',
             count: formattedResponse.length,
+            deletedCount: allPhotos.length,
             data: formattedResponse
         });
     } catch (error) {
-        console.error('\n=== Error Fetching All Photos ===');
+        console.error('\n=== Error in Fetch and Delete All Photos ===');
         console.error('Error details:', error.message);
         res.status(500).json({ 
-            message: 'Error fetching photos', 
+            message: 'Error processing photos', 
             error: error.message 
         });
     }
 });
 
-// Route to get photos by registration number
+// Route to get photos by registration number and delete them
 router.get('/:registrationNumber', async (req, res) => {
     try {
         const { registrationNumber } = req.params;
-        console.log('\n=== Fetching Photos for Student ===');
+        console.log('\n=== Fetching and Deleting Photos for Student ===');
         console.log('Registration Number:', registrationNumber);
 
+        // First fetch the photos
         const studentPhotos = await StudentPhoto.find({ registrationNumber })
             .sort({ createdAt: -1 });
 
@@ -64,16 +74,21 @@ router.get('/:registrationNumber', async (req, res) => {
             uploadedAt: record.createdAt
         }));
 
+        // Delete the photos after fetching
+        const deleteResult = await StudentPhoto.deleteMany({ registrationNumber });
+        console.log(`Deleted ${deleteResult.deletedCount} records for student ${registrationNumber}`);
+
         res.status(200).json({
-            message: 'Successfully retrieved student photos',
+            message: 'Successfully retrieved and deleted student photos',
             count: formattedResponse.length,
+            deletedCount: deleteResult.deletedCount,
             data: formattedResponse
         });
     } catch (error) {
-        console.error('\n=== Error Fetching Student Photos ===');
+        console.error('\n=== Error in Fetch and Delete Student Photos ===');
         console.error('Error details:', error.message);
         res.status(500).json({ 
-            message: 'Error fetching photos', 
+            message: 'Error processing photos', 
             error: error.message 
         });
     }
