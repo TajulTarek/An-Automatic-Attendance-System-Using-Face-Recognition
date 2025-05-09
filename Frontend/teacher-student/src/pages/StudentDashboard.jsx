@@ -23,7 +23,7 @@ const StudentDashboard = () => {
 
     const fetchPhotoCount = async () => {
       try {
-        const res = await axios.get(`${baseUrl}/photo_count/${studentId}`);
+        const res = await axios.get(`${baseUrl}/student-photos/photo_count/${studentId}`);
         setPhotoCount(res.data.count);
       } catch (error) {
         console.error('Failed to fetch photo count:', error);
@@ -53,7 +53,7 @@ const StudentDashboard = () => {
       fetchDashboardData();
       fetchUpcomingClasses();
       fetchPhotoCount();
-
+      console.log("Photo count",studentId, photoCount)
       console.log("Dashboard Data", dashboardData);
       console.log("Upcoming Class", upcomingClasses);
     } else {

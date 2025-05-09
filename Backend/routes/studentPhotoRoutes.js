@@ -146,13 +146,41 @@ router.post('/upload', async (req, res) => {
     }
 });
 
+
+router.post('/updateImageCount', async (req, res) => {
+    const imageCounts = req.body;  // Contains the image count for each student
+
+    try {
+        // Iterate over each student in the received data
+        for (let uni_id in imageCounts) {
+            const imageCount = imageCounts[uni_id];
+
+            // Find the student by uni_id and update the totalCnt field
+            const user = await User.findOne({ uni_id });
+            if (user) {
+                user.photoCnt += imageCount;  // Add the new count to the existing total
+                await user.save();  // Save the updated user
+                console.log(`Updated totalCnt for student ${uni_id}: ${user.photoCnt}`);
+            } else {
+            }
+        }
+
+        // Respond with success message
+        res.status(200).json({ message: 'Image counts updated successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error updating image counts.' });
+    }
+});
+
+
+
 router.get('/photo_count/:studentId', async (req, res) => {
     const { studentId } = req.params;
 
     try {
         const user = await User.findOne({ uni_id: studentId }); // assuming ID is the field name
 
-        console.log(user)
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });

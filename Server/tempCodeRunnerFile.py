@@ -1,0 +1,1 @@
+http://localhost:5000/student-photos/updateImageCount

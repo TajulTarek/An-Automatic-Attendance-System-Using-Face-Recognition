@@ -2,13 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Camera.css';
 import { cloudinaryConfig } from '../config/cloudinary';
+import { Camera, Trash2, Upload, CheckCircle, AlertCircle } from 'lucide-react';
 
 function ordinal(n) {
   const s = ["th", "st", "nd", "rd"], v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
-function Camera() {
+function CameraPage() {
   const [image, setImage] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [currentSessionImages, setCurrentSessionImages] = useState([]);
@@ -18,6 +19,7 @@ function Camera() {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const navigate = useNavigate();
+  const [progress, setProgress] = useState(0);  // Progress state
 
   useEffect(() => {
     startCamera();
@@ -30,12 +32,12 @@ function Camera() {
   const startCamera = async () => {
     try {
       setCurrentSessionImages([]); // Reset session images
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
           facingMode: 'user',
           width: { ideal: 1280 },
           height: { ideal: 720 }
-        } 
+        }
       });
       videoRef.current.srcObject = stream;
       streamRef.current = stream;
@@ -54,7 +56,7 @@ function Camera() {
 
     const studentId = localStorage.getItem('ID');
     console.log('Stopping camera for student:', studentId);
-    
+
     if (currentSessionImages.length > 0) {
       try {
         // Prepare data in the required format
@@ -105,6 +107,7 @@ function Camera() {
 
         const result = await response.json();
         console.log('Photos uploaded successfully:', result);
+        navigate('/student');
       } catch (error) {
         console.error('Error uploading photos:', error);
         setError('Error uploading photos: ' + error.message);
@@ -126,7 +129,7 @@ function Camera() {
       canvas.getContext('2d').drawImage(videoRef.current, 0, 0);
       const imageUrl = canvas.toDataURL('image/jpeg');
       setImage(imageUrl);
-      
+
       // Upload to Cloudinary
       setIsUploading(true);
       const formData = new FormData();
@@ -149,7 +152,8 @@ function Camera() {
 
       const data = await response.json();
       if (data.secure_url) {
-        const progress = Math.min((uploadedImages.length + 1) * 10, 100);
+        setProgress(Math.min((uploadedImages.length + 1) * 10, 100));
+        console.log(progress)
         const newImg = {
           url: data.secure_url,
           timestamp: new Date().toISOString(),
@@ -157,8 +161,8 @@ function Camera() {
         };
         setUploadedImages(prev => [...prev, newImg]);
         setCurrentSessionImages(prev => [...prev, newImg]);
-        if (progress === 100) {
-          navigate('/student');
+        if (progress === 90) {
+          stopCamera()
         }
       }
     } catch (error) {
@@ -189,66 +193,101 @@ function Camera() {
   return (
     <div className="camera-page">
       <div className="camera-header">
-        <h1>Student Photo Upload</h1>
-        <p>Take multiple photos to improve face recognition accuracy</p>
+        <p>Take multiple clear photos to improve face recognition accuracy.</p>
       </div>
-      <div className="camera-main">
-        <div className="video-controls-column">
-          <div className="video-container">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="video-preview"
-            />
-            {!isCameraActive && (
-              <div className="camera-placeholder">
-                <span className="camera-icon">📸</span>
-                <p>Camera is not active</p>
-                <button onClick={startCamera} className="start-camera-btn">
-                  Start Camera
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {/* Camera Section (reduced size with flex: 2) */}
+        <div style={{ flex: 2, backgroundColor: '#f0f0f0', padding: '1rem 5rem 1rem 5rem' }}>
+
+          <div className="camera-main">
+            <div className="video-controls-column">
+              <div className={`video-container ${!isCameraActive ? 'inactive' : ''}`}>
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="video-preview"
+                />
+                {!isCameraActive && (
+                  <div className="camera-placeholder">
+                    <span className="camera-icon">📷</span>
+                    <p>Camera is not active</p>
+                    <button onClick={startCamera} className="btn start-camera-btn">
+                      Start Camera
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="controls">
+                <button
+                  onClick={capturePhoto}
+                  disabled={isUploading || !isCameraActive}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-medium ${isUploading || !isCameraActive
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                    } transition duration-200`}
+                >
+                  {isUploading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Camera size={20} />
+                      <span>Take Photo</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={stopCamera}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition duration-200"
+                >
+                  <CheckCircle size={20} />
+                  <span>Done</span>
                 </button>
               </div>
-            )}
-          </div>
-          <div className="controls">
-            <button 
-              onClick={capturePhoto} 
-              disabled={isUploading || !isCameraActive}
-              className="capture-btn"
-            >
-              {isUploading ? (
-                <>
-                  <span className="loading-spinner"></span>
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  Take Photo
-                </>
-              )}
-            </button>
-            <button onClick={stopCamera} className="stop-btn">
-              Stop Camera
-            </button>
+            </div>
           </div>
         </div>
-        <div className="uploaded-images-side">
-          <h3>Uploaded Photos ({uploadedImages.length}/10)</h3>
-          <div className="image-list">
-            {uploadedImages.length === 0 && <div className="no-photos">No photos uploaded yet.</div>}
-            {uploadedImages.map((img, index) => (
-              <div key={index} className="uploaded-image-row">
-                <div className="uploaded-image-thumb">
-                  <img src={img.url} alt={`Uploaded ${index + 1}`} />
-                  <div className="progress-badge">{img.progress}%</div>
-                </div>
-                <div className="uploaded-image-label">{ordinal(index + 1)} Photo</div>
-              </div>
-            ))}
+
+        {/* Uploaded Images Section (increased size with flex: 3) */}
+        <div style={{ flex: 3, backgroundColor: '#e0e0e0', padding: '1rem' }}>
+          <div className="uploaded-images-side">
+            <h3>Uploaded Photos ({uploadedImages.length}/10)</h3>
+            <div className="image-list">
+              {uploadedImages.length === 0 ? (
+                <div className="no-photos">No photos uploaded yet.</div>
+              ) : (
+                <>
+                  <div className="uploaded-images-grid">
+                    {uploadedImages.map((img, index) => (
+                      <div key={index} className="uploaded-image-thumb">
+                        <img src={img.url} alt={`Uploaded ${index + 1}`} />
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="overall-progress">
+                    <label>Overall Upload Progress</label>
+                    <input
+                      type="range"
+                      className="progress-slider"
+                      value={progress}  // Bind progress to the slider
+                      readOnly
+                    />
+                    <div className="progress-text">
+                      {progress}%
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
       {error && (
         <div className="error-message">
           <span className="error-icon">⚠️</span>
@@ -257,6 +296,7 @@ function Camera() {
       )}
     </div>
   );
+
 }
 
-export default Camera;
+export default CameraPage;

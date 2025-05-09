@@ -12,6 +12,7 @@ import Login from './components/Login';
 import Camera from './components/Camera';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CameraPage from './components/Camera';
 
 
 const App = () => {
@@ -30,7 +31,7 @@ const App = () => {
             <Route path="/student" element={<StudentDashboard />} />
             <Route path="/student/attendance-records/:courseId" element={<AttendanceRecords />} />
             <Route path="/attendance_details" element={<AttendanceDetails />} /> {/* ✅ New route added */}
-            <Route path="/camera" element={<Camera />} />
+            <Route path="/camera" element={<CameraPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Login />} />
           </Routes>
