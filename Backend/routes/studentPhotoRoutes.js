@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const StudentPhoto = require('../models/StudentPhoto');
 
+// Test endpoint
+router.get('/test', (req, res) => {
+    console.log('Test endpoint hit');
+    res.json({ message: 'Student photos endpoint is working' });
+});
+
 // Route to save student photos
 router.post('/upload', async (req, res) => {
     try {
