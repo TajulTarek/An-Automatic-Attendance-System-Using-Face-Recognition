@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const StudentPhoto = require('../models/StudentPhoto');
 
+const User = require('../models/User');
+
 // Test endpoint
 router.get('/test', (req, res) => {
     console.log('Test endpoint hit');
@@ -148,7 +150,7 @@ router.get('/photo_count/:studentId', async (req, res) => {
     const { studentId } = req.params;
 
     try {
-        const user = await User.findOne({ ID: studentId }); // assuming ID is the field name
+        const user = await User.findOne({ uni_id: studentId }); // assuming ID is the field name
 
         console.log(user)
 
@@ -156,9 +158,9 @@ router.get('/photo_count/:studentId', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const photoCount = user.photoCnt || 0;
+        const photoCnt = user.photoCnt ;
 
-        return res.json({ count: photoCount });
+        return res.json({ count: photoCnt });
     } catch (error) {
         console.error('Error fetching photo count:', error);
         return res.status(500).json({ message: 'Server error' });
