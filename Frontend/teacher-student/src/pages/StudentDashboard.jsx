@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const StudentDashboard = () => {
+  const [photoCount, setPhotoCount] = useState(null);
+
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,6 +20,15 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     const studentId = localStorage.getItem('ID');
+
+    const fetchPhotoCount = async () => {
+      try {
+        const res = await axios.get(`${baseUrl}/photo_count/${studentId}`);
+        setPhotoCount(res.data.count);
+      } catch (error) {
+        console.error('Failed to fetch photo count:', error);
+      }
+    };
 
     const fetchDashboardData = async () => {
       try {
@@ -41,6 +52,7 @@ const StudentDashboard = () => {
     if (studentId) {
       fetchDashboardData();
       fetchUpcomingClasses();
+      fetchPhotoCount();
 
       console.log("Dashboard Data", dashboardData);
       console.log("Upcoming Class", upcomingClasses);
@@ -130,6 +142,11 @@ const StudentDashboard = () => {
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">Hello, {dashboardData.name}</h1>
                 <p className="text-gray-500">{dashboardData.uni_id}</p>
+                {photoCount !== null && (
+                  <p className={`mt-1 font-medium ${photoCount >= 5 ? 'text-green-600' : 'text-red-500'}`}>
+                    {photoCount >= 5 ? '✔ Verified' : '✖ Unverified'}
+                  </p>
+                )}
               </div>
             </div>
             <button
@@ -143,6 +160,7 @@ const StudentDashboard = () => {
             </button>
           </div>
         </div>
+
 
         {/* Quick Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">

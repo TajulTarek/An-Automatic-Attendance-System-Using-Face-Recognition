@@ -144,4 +144,24 @@ router.post('/upload', async (req, res) => {
     }
 });
 
+router.get('/photo_count/:studentId', async (req, res) => {
+    const { studentId } = req.params;
+
+    try {
+        const user = await User.findOne({ ID: studentId }); // assuming ID is the field name
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const photoCount = user.photoCnt || 0;
+
+        return res.json({ count: photoCount });
+    } catch (error) {
+        console.error('Error fetching photo count:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 module.exports = router; 
