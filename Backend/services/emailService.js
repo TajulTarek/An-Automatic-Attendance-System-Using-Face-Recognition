@@ -99,7 +99,7 @@ const sendLoginCredentials = async (userEmail, userName, registrationNumber, rol
 
                     <!-- Login Button -->
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://an-automatic-attendance-system-using.onrender.com" 
+                        <a href="https://sustattendance.netlify.app" 
                            style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
                             🚀 Login to System
                         </a>
@@ -228,7 +228,7 @@ const sendPasswordResetEmail = async (userEmail, userName, registrationNumber, r
 
                     <!-- Login Button -->
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://an-automatic-attendance-system-using.onrender.com" 
+                        <a href="https://sustattendance.netlify.app/student" 
                            style="background-color: #f59e0b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
                             🚀 Login with New Password
                         </a>

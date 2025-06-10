@@ -30,14 +30,14 @@ const Navbar = ({ setToken }) => {
     return (
         <div className='flex items-center py-3 px-6 justify-between bg-gradient-to-r blue-600 shadow-lg'>
             <div className="flex items-center mr-auto">
-                <Link to="/" className="flex items-center">
+                {/* <Link to="/" className="flex items-center"> */}
                     <img
                         src={sustlogo}
                         alt="logo"
                         className="w-[50px] h-auto sm:w-[20px] md:w-[60px] max-w-full cursor-pointer transition-transform duration-300 hover:scale-105"
                     />
                     <span className="ml-3 text-black font-bold text-lg hidden md:block">SUST Attendance</span>
-                </Link>
+                {/* </Link> */}
             </div>
 
             <div

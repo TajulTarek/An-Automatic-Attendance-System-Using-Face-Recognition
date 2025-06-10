@@ -152,6 +152,7 @@ const Login = () => {
                             </svg>
                             Password reset link has been sent to your email
                         </div>
+                        
                     </motion.div>
                 )}
 

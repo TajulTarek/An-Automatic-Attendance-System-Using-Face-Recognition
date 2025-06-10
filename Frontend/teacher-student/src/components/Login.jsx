@@ -211,6 +211,7 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 const Login = ({ }) => {
     const [uni_id, setuni_id] = useState('');
     const [password, setPassword] = useState('');
+    const [showEmailTip, setShowEmailTip] = useState(true);
     const [usertype, setUsertype] = useState('users');
 
     const onSubmitHandler = async (e) => {

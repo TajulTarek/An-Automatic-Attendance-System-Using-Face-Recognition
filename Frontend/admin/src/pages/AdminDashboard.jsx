@@ -71,7 +71,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:5000'; // Update this to match your backend URL
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const AdminDashboard = () => {
   // Sample data for Admin Dashboard
