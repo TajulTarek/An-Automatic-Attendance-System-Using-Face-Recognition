@@ -391,6 +391,13 @@ const Login = ({ }) => {
                         </span>
                         Register New Account
                     </Link>
+                    <a
+                        href="mailto:tarekahmad484@gmail.com"
+                        className="mt-2 text-blue-600 hover:underline relative flex justify-end text-sm"
+                        align="center"
+                    >
+                        Contact us
+                    </a>
                 </div>
             </div>
         </div>

@@ -12,7 +12,7 @@ const Sidebar = () => {
     }, []);
 
     return (
-        <div className='w-[10%] min-h-screen border-r-2'>
+        <div className='w-[10%] min-h-screen border-r-2 justify-between flex flex-col'>
             <div className='flex flex-col gap-4 pt-6 pl-[15%] text-[13px]'>
                 {usertype === 'teachers' && (
                     <NavLink className='flex items-center gap-3 border border-gray-300 border-r-0 px-3 py-2 rounded-l'
@@ -29,6 +29,14 @@ const Sidebar = () => {
                         <p className='hidden md:block'>Student Dashboard</p>
                     </NavLink>
                 )}
+            </div>
+            <div className="p-4 text-center py-40">
+                <a
+                    href="mailto:tarekahmad484@gmail.com"
+                    className="text-blue-600 hover:underline text-sm"
+                >
+                    Contact us
+                </a>
             </div>
         </div>
     );
