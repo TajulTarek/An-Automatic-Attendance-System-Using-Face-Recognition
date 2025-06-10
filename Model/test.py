@@ -9,17 +9,18 @@ from datetime import datetime
 def load_mp(file_path):
     with open(file_path, 'rb') as f:
         loaded_mp = pickle.load(f)
-    print(f"Dictionary loaded from {file_path}")
+    print(f"Dictionary loaded ")
     return loaded_mp
 
 def test_load():
-    descriptors_path = "C:/Users/tarek/OneDrive - MSFT/Desktop/Tarek_desktop/Attendance/Model/face_descriptors_final.npy"
+    descriptors_path = "C:/Attendance/Model/face_descriptors_final.npy"
     if os.path.exists(descriptors_path):
         loaded_descriptors = np.load(descriptors_path)
     else:
         loaded_descriptors = np.empty((0, 128))  # Initialize an empty array with 128 columns
     print(f"Loaded face descriptors with shape: {loaded_descriptors.shape}")
-    loaded_mp=load_mp("C:/Users/tarek/OneDrive - MSFT/Desktop/Tarek_desktop/Attendance/Model/mp_final.pkl")
+    loaded_mp=load_mp("C:/Attendance/Model/mp_final.pkl")
     print(np.shape(loaded_descriptors))
+    print((loaded_mp))
 
 test_load()

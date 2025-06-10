@@ -88,6 +88,14 @@ function CameraPage() {
         console.log('Response status:', response.status);
         console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
+        alert(
+          "📸 Photos Submitted Successfully!\n\n" +
+          "✅ Your profile will be updated shortly if the submitted photos are verified.\n\n" +
+          "⚠️ If the verification fails, your ID will remain unverified, and you will need to submit additional photos to complete the verification process."
+        );
+        
+        
+
         // Clone the response before reading it
         const responseClone = response.clone();
 

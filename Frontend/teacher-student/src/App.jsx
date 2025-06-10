@@ -9,10 +9,13 @@ import ViewAttendance from './pages/ViewAttendance';
 import AttendanceRecords from './pages/AttendanceRecords';
 import AttendanceDetails from './pages/AttendanceDetails'; // ✅ Import the new page
 import Login from './components/Login';
+import Register from './components/Register';
 import Camera from './components/Camera';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CameraPage from './components/Camera';
+import ResetPassword from './pages/ResetPassword';
+
 
 
 const App = () => {
@@ -33,7 +36,9 @@ const App = () => {
             <Route path="/attendance_details" element={<AttendanceDetails />} /> {/* ✅ New route added */}
             <Route path="/camera" element={<CameraPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} /> {/* ✅ New route added */}
           </Routes>
         </div>
       </div>

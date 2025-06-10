@@ -7,6 +7,7 @@ import CreateCourses from './pages/CreateCourses';
 import AddTeacher from './pages/AddTeacher';
 import AddStudent from './pages/AddStudent';
 import Login from './components/Login';
+import EnrollmentManagement from './pages/EnrollmentManagement';
 
 
 
@@ -25,6 +26,7 @@ const App = () => {
             <Route path="/admin/create-courses" element={<CreateCourses />} />
             <Route path="/admin/add-teacher" element={<AddTeacher />} />
             <Route path="/admin/add-student" element={<AddStudent />} />
+            <Route path="/admin/enrollment-management" element={<EnrollmentManagement />} />
           </Routes>
         </div>
       </div>

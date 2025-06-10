@@ -15,9 +15,10 @@ shape_predictor_path = './Weights/shape_predictor_68_face_landmarks.dat'
 face_model_path = './Weights/dlib_face_recognition_resnet_model_v1.dat'
 descriptors_path = './Model/face_descriptors_final.npy'
 mapping_path = './Model/mp_final.pkl'
-crop_base_path = "./Attendance/cropped/train/"
+crop_base_path = "./UploadedPhoto/train/"
 
-baseUrl="https://an-automatic-attendance-system-using.onrender.com"
+#baseUrl="https://an-automatic-attendance-system-using.onrender.com"
+baseUrl="http://localhost:5000"
 
 # Utilities
 def load_mp(file_path):

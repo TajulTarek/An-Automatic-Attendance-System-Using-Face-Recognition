@@ -6,7 +6,7 @@ const router = express.Router();
 const path = require("path");
 const fs = require("fs");
 const { execFile } = require("child_process");
-
+const { generatePassword, sendPasswordResetEmail } = require('../services/emailService');
 const getCurrentDate = () => {
     const now = new Date();
     const formatter = new Intl.DateTimeFormat('en-US', {
@@ -42,10 +42,78 @@ const getCurrentTime = () => {
 
     return `${adjustedHour}:${minute}`; // Return HH:mm
 };
+// POST - Validate user exists in database (ALL fields must match)
+router.post('/validate-user', async (req, res) => {
+    try {
+        const { name, uni_id, email, role } = req.body;
 
+        console.log(`🔍 Validating user: ${name}, ${uni_id}, ${email}, ${role}`);
 
+        // Search in appropriate collection based on role with ALL fields matching
+        let user;
+        if (role.toLowerCase() === 'teacher') {
+            // For teachers, you need to import Teacher model first
+            // const Teacher = require('../models/Teacher'); // Add this at the top
+            
+            user = await Teacher.findOne({
+                $and: [
+                    { name: { $regex: new RegExp(`^${name}$`, 'i') } }, // Exact name match (case insensitive)
+                    { teacher_id: uni_id }, // Exact teacher ID match
+                    { email: email.toLowerCase() }, // Exact email match
+                    { role: { $regex: new RegExp(`^${role}$`, 'i') } } // Exact role match (case insensitive)
+                ]
+            });
+        } else {
+            // Search in users (students) collection - ALL fields must match
+            user = await User.findOne({
+                $and: [
+                    { name: { $regex: new RegExp(`^${name}$`, 'i') } }, // Exact name match (case insensitive)
+                    { uni_id: uni_id }, // Exact university ID match
+                    { email: email.toLowerCase() }, // Exact email match
+                    // Note: User model might not have role field, so we check if it's Student by default
+                ]
+            });
+            
+            // Additional check: if user found but role doesn't match expected
+            if (user && role.toLowerCase() !== 'student') {
+                user = null; // Invalid role for student
+            }
+        }
 
+        if (!user) {
+            console.log(`❌ User not found - one or more fields don't match`);
+            return res.status(404).json({
+                success: false,
+                message: `No ${role.toLowerCase()} found with ALL the provided information. Please verify that your name, university ID, email address, and role are all correct.`,
+                details: {
+                    provided: { name, uni_id, email, role },
+                    message: "All fields must match exactly with our records"
+                }
+            });
+        }
 
+        console.log(`✅ User found and ALL fields match: ${user.name} (${user.email})`);
+
+        res.json({
+            success: true,
+            message: 'All user information validated successfully',
+            data: {
+                name: user.name,
+                email: user.email,
+                uni_id: role.toLowerCase() === 'teacher' ? user.teacher_id : user.uni_id,
+                role: role
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ User validation error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error validating user information',
+            error: error.message
+        });
+    }
+});
 
 // Route: Register a new user
 router.post('/add', async (req, res) => {
@@ -134,7 +202,74 @@ router.get('/:student_id', async (req, res) => {
         res.status(500).json({ message: 'Error fetching student dashboard', error: error.message });
     }
 });
+// POST - Reset user password and send new credentials via email
+router.post('/reset-password', async (req, res) => {
+    try {
+        const { name, uni_id, email, role, newPassword } = req.body;
 
+        console.log(`🔄 Password reset request for ${email}`);
+
+        // Find user by email or uni_id
+        const user = await User.findOne({
+            $or: [
+                { email: email.toLowerCase() },
+                { uni_id: uni_id }
+            ]
+        });
+
+        if (!user) {
+            console.log(`❌ User not found: ${email}`);
+            return res.status(404).json({
+                success: false,
+                message: 'User not found with provided email or university ID'
+            });
+        }
+
+        console.log(`✅ User found: ${user.email}`);
+
+        // Generate new password
+        //const newPassword = generatePassword();
+        //console.log(`🔑 Generated new password: ${newPassword}`);
+
+        // Update user password
+        user.password = newPassword;
+        user.isPasswordChanged = false; // Mark as needs to change password
+        await user.save();
+
+        console.log(`💾 Password updated in database`);
+
+        // Send password reset email
+        // await sendPasswordResetEmail(
+        //     user.email,
+        //     user.name,
+        //     user.uni_id,
+        //     user.role,
+        //     newPassword
+        // );
+
+        //console.log(`📧 Password reset email sent to ${user.email}`);
+
+        res.json({
+            success: true,
+            message: `Password reset successful.`,// New credentials sent to ${email}`,
+            data: {
+                email: user.email,
+                name: user.name,
+                uni_id: user.uni_id,
+                role: user.role,
+                newPassword: newPassword
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Password reset error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error processing password reset request',
+            error: error.message
+        });
+    }
+});
 // Route to handle image upload
 router.post("/upload-image", (req, res) => {
     try {
