@@ -561,9 +561,32 @@ const StudentDashboard = () => {
                 <h1 className="text-2xl font-bold text-gray-800">Hello, {dashboardData.name}</h1>
                 <p className="text-gray-500">{dashboardData.uni_id}</p>
                 {photoCount !== null && (
-                  <p className={`mt-1 font-medium ${photoCount >= 5 ? 'text-green-600' : 'text-red-500'}`}>
-                    {photoCount >= 5 ? '✔ Verified' : '✖ Unverified'}
-                  </p>
+                  <div className="flex items-center">
+                    {/* Text smoothly changes color */}
+                    <p className={`mt-1 font-medium transition-colors duration-300 ${photoCount >= 5 ? 'text-green-600' : 'text-red-500'}`}>
+                      {photoCount >= 5 ? '✔ Verified' : '✖ Unverified'}
+                    </p>
+
+                    {/* This block only renders if the user is not verified */}
+                    {photoCount < 5 && (
+                      <div className="relative group ml-2">
+                        {/* Using an SVG icon instead of text '?' */}
+                        <span className="cursor-help text-gray-500">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </span>
+
+                        {/* Tooltip with fade-in/out transition */}
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg 
+                       opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                          Please upload at least 8 photos to get verified
+                          {/* Tooltip Arrow */}
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

@@ -332,11 +332,12 @@ const Register = () => {
                     </div>
                 </form>
 
-                <div className="mt-6 text-center text-sm">
-                    <p className="text-gray-500">
-                        Registration requests are reviewed by administrators
+                <div className="mt-6 text-center text-sm px-4">
+                    <p className="text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        Your registration request will be review by an administrator. Once approved, your login credentials will be sent to your registered email address.
                     </p>
                 </div>
+
             </div>
         </div>
     );

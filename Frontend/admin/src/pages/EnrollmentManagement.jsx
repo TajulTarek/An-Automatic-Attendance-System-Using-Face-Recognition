@@ -105,6 +105,8 @@ const handleSendMail = async (requestId, email, name) => {
       alert(`❌ Failed to send credentials: ${response.data.message}`);
     }
 
+    
+
   } catch (error) {
     console.log(`💥 ===== ERROR DETAILS =====`);
     console.error('❌ Error sending credentials:', error);

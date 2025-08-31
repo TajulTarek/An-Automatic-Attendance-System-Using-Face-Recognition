@@ -11,7 +11,7 @@ from runner import yolo_detect
 stop_event = threading.Event()
 
 # Function to process a single camera
-def process_camera(room_no, camera_url,camera_type):
+def process_camera(room_no, camera_url,camera_type,camera_no):
     initialize()
     #initialize_insight_face()
 
@@ -24,7 +24,7 @@ def process_camera(room_no, camera_url,camera_type):
             if camera_type=="ip":
                 image_path = capture_from_ip_camera(room_no, camera_url)
             else:
-                image_path = capture_from_camera(room_no,camera_url)
+                image_path = capture_from_camera(room_no,camera_url,camera_no)
             
             if image_path is None:
                 print(f"No image captured from Camera {room_no}. Retrying...")
@@ -68,8 +68,8 @@ def process_camera(room_no, camera_url,camera_type):
 if __name__ == "__main__":
     # List of cameras (ID and URL pairs)
     cameras = [
-        {"room_no": "gallery 1", "url": config.G1_CAMERA_URL, "camera_type":"ip"},
-        #{"room_no": "gallery 2", "url": config.G2_CAMERA_URL, "camera_type":"mobile"},
+        {"room_no": "gallery 1", "url": config.G11_CAMERA_URL, "camera_type":"mobile","camera_no":"1"},
+        {"room_no": "gallery 1", "url": config.G12_CAMERA_URL, "camera_type":"mobile","camera_no":"2"},
         # Add more cameras as needed
     ]
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     for camera in cameras:
         t = threading.Thread(
             target=process_camera,
-            args=(camera["room_no"], camera["url"],camera["camera_type"])
+            args=(camera["room_no"], camera["url"],camera["camera_type"],camera["camera_no"])
         )
         t.start()
         threads.append(t)

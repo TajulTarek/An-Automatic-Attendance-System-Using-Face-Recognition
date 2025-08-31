@@ -37,6 +37,7 @@ const Sidebar = () => {
                 >
                     Contact us
                 </a>
+                
             </div>
         </div>
     );

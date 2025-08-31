@@ -171,7 +171,7 @@ def get_class_from_yolo_img(image_np,face_detection):
     return results
 
 
-def capture_from_camera(room_no,camera_ip):
+def capture_from_camera(room_no,camera_ip,camera_no):
     CAMERA_IP = camera_ip
         
     URL = f"http://{CAMERA_IP}/shot.jpg"
@@ -183,7 +183,7 @@ def capture_from_camera(room_no,camera_ip):
             frame = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
 
             if frame is not None:
-                filename = f"captured_images/captured_image_{room_no}.jpg"
+                filename = f"captured_images/captured_image_{room_no}_{camera_no}.jpg"
                 cv2.imwrite(filename, frame)
                 print(f"Image saved as {filename}")
             else:

@@ -17,8 +17,8 @@ descriptors_path = './Model/face_descriptors_final.npy'
 mapping_path = './Model/mp_final.pkl'
 crop_base_path = "./UploadedPhoto/train/"
 
-#baseUrl="https://an-automatic-attendance-system-using.onrender.com"
-baseUrl="http://localhost:5000"
+baseUrl="https://an-automatic-attendance-system-using.onrender.com"
+#baseUrl="http://localhost:5000"
 
 # Utilities
 def load_mp(file_path):
@@ -79,6 +79,7 @@ def process_images_from_api(api_url):
                     cv2.imwrite(face_filename, cv2.cvtColor(cropped_face, cv2.COLOR_RGB2BGR))
 
                     shape = sp(image_np, face)
+                    
                     face_desc = facerec.compute_face_descriptor(image_np, shape)
                     face_desc = np.asarray(face_desc, dtype=np.float64).reshape(1, -1)
 
