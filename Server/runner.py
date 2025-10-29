@@ -8,7 +8,7 @@ def yolo_detect(img_path):
         "--weights", "./Server/yolov9-face-detection/yolov9/best.pt",
         "--source", img_path
     ]
-
+    
     try:
         result = subprocess.run(
             command, 

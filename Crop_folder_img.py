@@ -12,7 +12,6 @@ def crop_face(image_path):
     if len(faces) == 0:
         return None  # No face detected
 
-    # Take the first face (you can modify this to select a specific one if needed)
     (x, y, w, h) = faces[0]
 
     # Crop the face from the image
