@@ -212,3 +212,8 @@ Ensure the following exist (paths in `Server/config.py`):
 MIT
 
 ---
+
+## 📬 Contact
+- **Tarek** – `https://github.com/TajulTarek`
+- **Email** – `tarekahmad484@email.com`
+
